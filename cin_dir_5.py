@@ -103,9 +103,9 @@ p=[float(i) for i in sys.argv[1:nvar+1]]
 #        1    2
 
 d  = [        5,   0,         0,  -2]
-th = [p[0] -90,-90, p[1] - 90, 90]
+th = [p[0] + 90,   0, p[1] - 90 , -90]
 a  = [        0,   2,         3,   0]
-al = [        0,   0,         0, 90]
+al = [      -90,   0,         0, -90]
 
 # Orígenes para cada articulación
 o00 = [0, 0, 0, 1]
