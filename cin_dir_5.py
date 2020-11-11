@@ -102,10 +102,10 @@ p=[float(i) for i in sys.argv[1:nvar+1]]
 # Parámetros D-H:
 #        1    2
 
-d  = [        5, 0,   3]
-th = [p[0] + 90,-90, p[1]]
-a  = [        0, 2,    3]
-al = [        0, 0,    0]
+d  = [        5,   0,         0,  -2]
+th = [p[0] -90,-90, p[1] - 90, 90]
+a  = [        0,   2,         3,   0]
+al = [        0,   0,         0, 90]
 
 # Orígenes para cada articulación
 o00 = [0, 0, 0, 1]
@@ -117,10 +117,11 @@ op2 = [0, 0, 0, 1]
 T0p1 = matriz_T(d[0], th[0], a[0], al[0])
 Tp11 = matriz_T(d[1], th[1], a[1], al[1])
 T1p2 = matriz_T(d[2], th[2], a[2], al[2])
+Tp22 = matriz_T(d[3], th[3], a[3], al[3])
 
 T01 = np.dot(T0p1, Tp11)
-T02 = np.dot(T01, Tp11)
-T03 = np.dot(T02, T1p2)
+T02 = np.dot(T01, T1p2)
+T03 = np.dot(T02, Tp22)
 
 # Transformación de cada articulación
 op10 = np.dot(T0p1, op1).tolist()
