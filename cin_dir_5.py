@@ -94,7 +94,7 @@ def matriz_T(d,theta,a,alpha):
 
 plt.ion() # Modo interactivo
 # Introducción de los valores de las articulaciones
-nvar=2 # Número de variables
+nvar=4 # Número de variables
 if len(sys.argv) != nvar+1:
   sys.exit('El número de articulaciones no es el correcto ('+str(nvar)+')')
 p=[float(i) for i in sys.argv[1:nvar+1]]
@@ -102,33 +102,51 @@ p=[float(i) for i in sys.argv[1:nvar+1]]
 # Parámetros D-H:
 #        1    2
 
-d  = [        5,   0,         0,  -2]
-th = [p[0] + 90,   0, p[1] - 90 , -90]
-a  = [        0,   2,         3,   0]
-al = [      -90,   0,         0, -90]
+d  = [   5,   2,    0,  -2,    5,     0,    0, 0]
+th = [p[0],   0, p[1], -90,   90, -p[3], p[3], 0]
+a  = [   0,   0,    3,   0,    0,     1,    1, 1]
+al = [ -90,   0,    0, -90,   p[2],    -90,    -90, -90]
 
 # Orígenes para cada articulación
 o00 = [0, 0, 0, 1]
 op1 = [0, 0, 0, 1]
 o11 = [0, 0, 0, 1]
 op2 = [0, 0, 0, 1]
+o22 = [0, 0, 0, 1]
+o33 = [0, 0, 0, 1]
+op41 = [0, 0, 0, 1]
+op42 = [0, 0, 0, 1]
+oef = [0, 0, 0, 1]
 
 # Cálculo matrices transformación
 T0p1 = matriz_T(d[0], th[0], a[0], al[0])
 Tp11 = matriz_T(d[1], th[1], a[1], al[1])
 T1p2 = matriz_T(d[2], th[2], a[2], al[2])
 Tp22 = matriz_T(d[3], th[3], a[3], al[3])
+Tp33 = matriz_T(d[4], th[4], a[4], al[4])
+Tp41 = matriz_T(d[5], th[5], a[5], al[7])
+Tp42 = matriz_T(d[6], th[6], a[6], al[6])
+Tpef = matriz_T(d[7], th[7], a[7], al[5])
 
 T01 = np.dot(T0p1, Tp11)
 T02 = np.dot(T01, T1p2)
 T03 = np.dot(T02, Tp22)
+T04 = np.dot(T03, Tp33)
+T05 = np.dot(T04, Tp41)
+T06 = np.dot(T04, Tp42)
+T07 = np.dot(T04, Tpef)
 
 # Transformación de cada articulación
 op10 = np.dot(T0p1, op1).tolist()
 o10 = np.dot(T01, o11).tolist()
 op20 = np.dot(T02, op2).tolist()
+o20 = np.dot(T03, o22).tolist()
+o30 = np.dot(T04, o33).tolist()
+op410 = np.dot(T05, op41).tolist()
+op420 = np.dot(T06, op42).tolist()
+opef0 = np.dot(T07, oef).tolist()
 
 # Mostrar resultado de la cinemática directa
-muestra_origenes([o00, op10, o10, op20])
-muestra_robot   ([o00, op10, o10, op20])
+muestra_origenes([o00, op10, o10, op20, o20, o30, [[op410], [op420]]], opef0)
+muestra_robot   ([o00, op10, o10, op20, o20, o30, [[op410], [op420]]], opef0)
 input()
